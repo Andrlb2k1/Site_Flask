@@ -2,10 +2,15 @@
 
 body {
 	background-color: aquamarine;
+	background: url(../imagens/fundo.jpg) no-repeat;
+	background-size: cover;
+	background-attachment: fixed;
+	display: block;
 }
 
 div#form_fundo {
-	background-color: blue;
+	backdrop-filter: blur(10px);
+	opacity: .9;
 	margin: 10% 25% 25% 25%;
 	text-align: center;
 	border-radius: 20px;
