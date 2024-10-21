@@ -14,10 +14,11 @@ def login():
 	
 	nome = request.form.get('nome')
 	senha = request.form.get('senha')
-	print(nome)
-	print(senha)
-
-	return redirect('/')
+	
+	if nome == 'andre' and senha == '123':
+		return render_template('usuario.html')
+	else:
+		return redirect('/')
 
 
 
