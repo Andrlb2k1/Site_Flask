@@ -3,13 +3,13 @@
 from flask import Flask, render_template, redirect, request
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'ANDREBRISTOT'
+app.config['SECRET_KEY'] = '@ANDRE.BRISTOT'
 
 @app.route('/')
 def home():
 	return render_template('login.html')
 
-@app.route('/login')
+@app.route('/login', methods=['POST'])
 def login():
 	
 	nome = request.form.get('nome')
