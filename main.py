@@ -30,6 +30,26 @@ def login():
                 flash('Usuário inválido')
                 return redirect("/")
 
+@app.route('/cadastrarUsuario', methods=['POST'])
+def cadastrarUsuario():
+    user = []
+    nome = request.form.get('nome')
+    senha = request.form.get('senha')
+    user = [
+        {
+            "nome": nome,
+            "senha": senha
+        }
+    ]
+    with open('usuarios.json') as usuariosTemp:
+        usuarios = json.load(usuariosTemp)
+
+    usuarioNovo = usuarios + user
+
+    with open('usuarios.json', 'w') as gravarTemp:
+        json.dump(usuarioNovo, gravarTemp, indent=4)
+    
+    return render_template("administrador.html")
 
 if __name__ in "__main__":
     app.run(debug=True)    
