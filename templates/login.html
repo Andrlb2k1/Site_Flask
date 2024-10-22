@@ -7,6 +7,14 @@
 	<link rel="stylesheet" type="text/css" href="../static/css/home.css">
 </head>
 <body>
+
+	{% set mensagem = get_flashed_messages() %}
+	{% if mensagem %}
+		<div class="flash_alerta">
+			{{mensagem[0]}}
+		</div>
+	{% endif %}
+
 	<div id="form_fundo">
 		<h1>Login</h1>
 		<h1>@andre.bristot</h1>
