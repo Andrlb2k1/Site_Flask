@@ -55,5 +55,14 @@
 			{% endif %}
 		</div>
 	</div>
+	<div id="form_fundo" class="upload">
+		<h1>Enviar arquivos</h1>
+		<div id="form_frente" class="upload">
+			<form action="/upload" method="post" enctype="multipart/form-data">
+				<input type="file" name="documento" id="documento"><br><br><br>
+				<button type="submit">Enviar</button>
+			</form>
+		</div>
+	</div>
 </body>
 </html>
