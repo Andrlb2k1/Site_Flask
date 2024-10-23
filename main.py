@@ -4,13 +4,24 @@ import json
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ANDRE.BRISTOT'
 
+logado = False
+
 @app.route('/')
 def home():
+    global logado
+    logado = False
     return render_template('login.html')
+
+@app.route('/adm')
+def adm():
+    if logado == True:
+        return render_template("administrador.html")
+    if logado == False:
+        return redirect('/')
 
 @app.route('/login', methods=['POST'])
 def login():
-
+    global logado
     nome = request.form.get('nome')
     senha = request.form.get('senha')
 
@@ -21,7 +32,8 @@ def login():
             cont += 1
 
             if nome == 'adm' and senha == '000':
-                return render_template("administrador.html")
+                logado = True
+                return redirect('/adm')
 
             if usuario['nome'] == nome and usuario['senha'] == senha:
                 return render_template("usuarios.html")
@@ -49,7 +61,7 @@ def cadastrarUsuario():
     with open('usuarios.json', 'w') as gravarTemp:
         json.dump(usuarioNovo, gravarTemp, indent=4)
     
-    return render_template("administrador.html")
+    return redirect('/adm')
 
 if __name__ in "__main__":
     app.run(debug=True)    
