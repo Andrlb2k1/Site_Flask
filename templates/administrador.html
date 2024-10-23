@@ -34,5 +34,22 @@
 			</form>
 		</div>
 	</div>
+	<div id="form_fundo" class="listaUsuarios">
+		<h1>Usuários cadastrados</h1>
+		<h1>@andre.bristot</h1>
+		<div id="form_frente" class="listaUsuarios">
+			{% if usuarios %}
+				{% for c in usuarios %}
+					<ul>
+						<li>Nome: {{c['nome']}}</li><br>
+						<li>Senha: {{c['senha']}}</li>
+					</ul>
+					------------------------------------------------------
+				{% endfor %}
+			{% else %}
+				<h1>Não existem usuários cadastrados</h1>
+			{% endif %}
+		</div>
+	</div>
 </body>
 </html>
