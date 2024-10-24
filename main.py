@@ -1,7 +1,12 @@
-from flask import Flask, render_template, redirect, request, flash, send_from_directory
+from flask import Flask, render_template, redirect, request, flash, send_from_directory, url_for
 import json
 import ast
 import os
+from pathlib import Path
+import mysql.connector
+
+caminho = Path(__file__)
+pasta_atual = caminho.parent
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ANDRE.BRISTOT'
@@ -28,7 +33,7 @@ def adm():
 def usuarios():
     if logado == True:
         arquivo = []
-        for documento in os.listdir('arquivos'):
+        for documento in os.listdir(f'{pasta_atual}/arquivos'):
             arquivo.append(documento)
 
         return render_template("usuarios.html", arquivos=arquivo)
@@ -41,10 +46,15 @@ def login():
     nome = request.form.get('nome')
     senha = request.form.get('senha')
 
-    with open('usuarios.json') as usuariosTemp:
-        usuarios = json.load(usuariosTemp)
-        cont = 0
-        for usuario in usuarios:
+    connectBD = mysql.connector.connect(host='localhost', database='usuarios', user='root', password='')
+    cont = 0
+    if connectBD.is_connected():
+        print('Conectado')
+        cursor = connectBD.cursor()
+        cursor.execute('select * from usuario;')
+        usuariosBD = cursor.fetchall()
+
+        for usuario in usuariosBD:
             cont += 1
 
             if nome == 'adm' and senha == '000':
