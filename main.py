@@ -56,16 +56,18 @@ def login():
 
         for usuario in usuariosBD:
             cont += 1
+            usuarioNome = str(usuario[1])
+            usuarioSenha = str(usuario[2])
 
             if nome == 'adm' and senha == '000':
                 logado = True
                 return redirect('/adm')
 
-            if usuario['nome'] == nome and usuario['senha'] == senha:
+            if usuarioNome == nome and usuarioSenha == senha:
                 logado = True
                 return redirect('/usuarios')
             
-            if cont >= len(usuarios):
+            if cont >= len(usuariosBD):
                 flash('Usuário inválido')
                 return redirect("/")
 
