@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, flash, send_from_directory, url_for
+from flask import Flask, render_template, redirect, request, flash, send_from_directory
 import json
 import ast
 import os
@@ -25,7 +25,7 @@ def adm():
         with open('usuarios.json') as usuariosTemp:
             usuarios = json.load(usuariosTemp)
             
-        return render_template("administrador.html", usuarios=usuarios)
+        return render_template("administrador.html",usuarios=usuarios)
     if logado == False:
         return redirect('/')
 
@@ -46,11 +46,11 @@ def login():
     nome = request.form.get('nome')
     senha = request.form.get('senha')
 
-    connectBD = mysql.connector.connect(host='localhost', database='usuarios', user='root', password='')
+    connect_BD = mysql.connector.connect(host='localhost', database='usuarios',user='root', password='')
     cont = 0
-    if connectBD.is_connected():
-        print('Conectado')
-        cursor = connectBD.cursor()
+    if connect_BD.is_connected():
+        print('conectado')
+        cursor = connect_BD.cursor()
         cursor.execute('select * from usuario;')
         usuariosBD = cursor.fetchall()
 
@@ -70,28 +70,25 @@ def login():
             if cont >= len(usuariosBD):
                 flash('Usuário inválido')
                 return redirect("/")
+    else:
+        return redirect('/')
 
 @app.route('/cadastrarUsuario', methods=['POST'])
 def cadastrarUsuario():
     global logado
-    user = []
     nome = request.form.get('nome')
     senha = request.form.get('senha')
-    user = [
-        {
-            "nome": nome,
-            "senha": senha
-        }
-    ]
-    with open('usuarios.json') as usuariosTemp:
-        usuarios = json.load(usuariosTemp)
+    connect_BD = mysql.connector.connect(host='localhost', database='usuarios',user='root', password='')
 
-    usuarioNovo = usuarios + user
+    if connect_BD.is_connected():
+        cursor = connect_BD.cursor()
+        cursor.execute(f"insert into usuario values (default, '{nome}', '{senha}');")
+    if connect_BD.is_connected():
+        cursor.close()
+        connect_BD.close()
 
-    with open('usuarios.json', 'w') as gravarTemp:
-        json.dump(usuarioNovo, gravarTemp, indent=4)
     logado = True
-    flash(F'{nome} cadastrado(a)')
+    flash(F'{nome} cadastrado')
     return redirect('/adm')
 
 @app.route('/excluirUsuario', methods=['POST'])
@@ -109,17 +106,17 @@ def excluirUsuario():
                 with open('usuarios.json', 'w') as usuarioAexcluir:
                     json.dump(usuariosJson, usuarioAexcluir, indent=4)
 
-    flash(F'{nome} excluído(a)')
+    flash(F'{nome} excluído')
     return redirect('/adm')
 
-@app.route('/upload', methods=['POST'])
+@app.route("/upload", methods=['POST'])
 def upload():
     global logado
     logado = True
-
+    
     arquivo = request.files.get('documento')
     nome_arquivo = arquivo.filename.replace(" ","-")
-    arquivo.save(os.path.join('arquivos', nome_arquivo))
+    arquivo.save(os.path.join(f'{pasta_atual}/arquivos/', nome_arquivo))
 
     flash('Arquivo salvo')
     return redirect('/adm')
@@ -131,4 +128,4 @@ def download():
     return send_from_directory('arquivos', nomeArquivo, as_attachment=True)
 
 if __name__ in "__main__":
-    app.run(debug=True)    
+    app.run(debug=True)
