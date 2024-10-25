@@ -22,9 +22,13 @@ def home():
 @app.route('/adm')
 def adm():
     if logado == True:
-        with open('usuarios.json') as usuariosTemp:
-            usuarios = json.load(usuariosTemp)
-            
+        connect_BD = mysql.connector.connect(host='localhost', database='usuarios',user='root', password='')
+    
+        if connect_BD.is_connected():
+            print('conectado')
+            cursor = connect_BD.cursor()
+            cursor.execute('select * from usuario;')
+            usuarios = cursor.fetchall()
         return render_template("administrador.html",usuarios=usuarios)
     if logado == False:
         return redirect('/')
@@ -49,7 +53,7 @@ def login():
     connect_BD = mysql.connector.connect(host='localhost', database='usuarios',user='root', password='')
     cont = 0
     if connect_BD.is_connected():
-        print('conectado')
+        print('Conectado')
         cursor = connect_BD.cursor()
         cursor.execute('select * from usuario;')
         usuariosBD = cursor.fetchall()
@@ -95,16 +99,17 @@ def cadastrarUsuario():
 def excluirUsuario():
     global logado
     logado = True
-    usuario = request.form.get('usuarioPexcluir')
-    usuarioDict = ast.literal_eval(usuario)
-    nome = usuarioDict['nome']
-    with open('usuarios.json') as usuariosTemp:
-        usuariosJson = json.load(usuariosTemp)
-        for c in usuariosJson:
-            if c == usuarioDict:
-                usuariosJson.remove(usuarioDict)
-                with open('usuarios.json', 'w') as usuarioAexcluir:
-                    json.dump(usuariosJson, usuarioAexcluir, indent=4)
+    nome = request.form.get('nome')
+    usuarioID = request.form.get('usuarioPexcluir')
+    connect_BD = mysql.connector.connect(host='localhost', database='usuarios',user='root', password='')
+
+    if connect_BD.is_connected():
+        cursor = connect_BD.cursor()
+        cursor.execute(f"delete from usuario where id='{usuarioID}'; ")
+
+    if connect_BD.is_connected():
+        cursor.close()
+        connect_BD.close()
 
     flash(F'{nome} excluído')
     return redirect('/adm')
